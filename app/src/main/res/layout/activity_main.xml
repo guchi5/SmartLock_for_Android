@@ -47,4 +47,8 @@
         android:layout_height="250dp"
         android:background="#6B8BC4"
         />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>
