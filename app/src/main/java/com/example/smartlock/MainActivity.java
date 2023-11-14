@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.Manifest;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconManager;
@@ -23,12 +25,11 @@ import java.util.Collection;
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     protected static final String TAG = "MonitoringActivity";
-    private BeaconManager beaconManager;
+    private BeaconGateway b_gateway;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        System.out.println("HELLO");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Android M Permission check
             if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -46,37 +47,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        beaconManager = BeaconManager.getInstanceForApplication(this);
-
-        beaconManager.getBeaconParsers().add(new BeaconParser().
-                setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
-        beaconManager.addMonitorNotifier(new MonitorNotifier() {
-            @Override
-            public void didEnterRegion(Region region) {
-                Log.i(TAG, "I just saw an beacon for the first time!");
-            }
-
-            @Override
-            public void didExitRegion(Region region) {
-                Log.i(TAG, "I no longer see an beacon");
-            }
-
-            @Override
-            public void didDetermineStateForRegion(int state, Region region) {
-                Log.i(TAG, "I have just switched from seeing/not seeing beacons: "+state);
-            }
-        });
-        beaconManager.addRangeNotifier(new RangeNotifier() {
-
-            @Override
-            public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-                if (beacons.size() > 0) {
-                    Log.i(TAG, "The first beacon I see is about "+beacons.iterator().next().getDistance()+" meters away.");
+        b_gateway = new BeaconGateway(this);
+        Switch sw = findViewById(R.id.beacon_switch);
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled
+                    b_gateway.start();
+                } else {
+                    // The toggle is disabled
+                    b_gateway.stop();
                 }
             }
         });
-        beaconManager.startMonitoring(new Region("myMonitoringUniqueId", Identifier.parse("00000000-9BD0-1001-B000-001C4D778244"), null, null));
-        beaconManager.startRangingBeacons(new Region("myRangingUniqueId", Identifier.parse("00000000-9BD0-1001-B000-001C4D778244"), null, null));
+
     }
 
     @Override
