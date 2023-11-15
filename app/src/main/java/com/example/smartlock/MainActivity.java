@@ -2,6 +2,7 @@ package com.example.smartlock;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.view.PreviewView;
 
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -9,6 +10,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.Manifest;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
@@ -26,13 +29,15 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     protected static final String TAG = "MonitoringActivity";
     private BeaconGateway b_gateway;
+    private SmartLockRegister add_smart_lock;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Android M Permission check
-            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED || this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    || this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("This app needs location and camera access");
                 builder.setMessage("Please grant location and camera access");
@@ -40,7 +45,10 @@ public class MainActivity extends AppCompatActivity {
                 builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
-                        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.CAMERA}, PERMISSION_REQUEST_COARSE_LOCATION);
+                        requestPermissions(
+                                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.CAMERA},
+                                PERMISSION_REQUEST_COARSE_LOCATION
+                        );
                     }
                 });
                 builder.show();
@@ -60,8 +68,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
+        PreviewView previewView = findViewById(R.id.viewFinder);
+        add_smart_lock = new SmartLockRegister(this, previewView);
+        Button addSmartLockBtn =findViewById(R.id.add_smartlock);
+        addSmartLockBtn.setOnClickListener(add_smart_lock);
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
