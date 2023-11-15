@@ -13,6 +13,7 @@ import android.Manifest;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.Switch;
 
 import org.altbeacon.beacon.Beacon;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected static final String TAG = "MonitoringActivity";
     private BeaconGateway b_gateway;
     private SmartLockRegister add_smart_lock;
+    private SmartLockLister smartLockLister;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,8 +73,14 @@ public class MainActivity extends AppCompatActivity {
         add_smart_lock = new SmartLockRegister(this);
         Button addSmartLockBtn =findViewById(R.id.add_smartlock);
         addSmartLockBtn.setOnClickListener(add_smart_lock);
-    }
+        ListView smartLockList = (ListView)findViewById(R.id.smart_lock_list);
+        this.smartLockLister = new SmartLockLister(this, smartLockList);
+        smartLockList.setOnItemLongClickListener(this.smartLockLister);
 
+    }
+    public void updateSmartLockView(String smartLock){
+        smartLockLister.updateListView(smartLock);
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,

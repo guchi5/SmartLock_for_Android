@@ -23,6 +23,8 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -90,8 +92,16 @@ public class SmartLockRegister implements View.OnClickListener{
                                                 alertDialog.dismiss();
                                                 // QRコードが見つかった場合の処理を行う
                                                 System.out.println("QRコード："+qrText);
-                                                String[] encode_qr =  handleQRCode(qrText);
+                                                String[] encode_qr = new String[0];
+                                                try {
+                                                    encode_qr = handleQRCode(qrText);
+                                                    activity.updateSmartLockView(encode_qr[2]);
+                                                    Toast.makeText(activity, (CharSequence) "uuid:"+encode_qr[0], Toast.LENGTH_LONG).show();
 
+                                                } catch (UnsupportedEncodingException e) {
+                                                    Toast.makeText(activity, (CharSequence) "Error: 対応していないQRコードです", Toast.LENGTH_LONG).show();
+                                                    throw new RuntimeException(e);
+                                                }
                                             }
                                         }
                                         image.close(); // 画像をクローズしてリソースを解放
@@ -113,27 +123,21 @@ public class SmartLockRegister implements View.OnClickListener{
 
     }
 
-    private String[] handleQRCode(String url){
+    private String[] handleQRCode(String url) throws UnsupportedEncodingException {
         String[] query = url.split("&");
-        try{
-            byte[] sk =  Base64.decode(query[1].split("=")[1], Base64.DEFAULT);
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            byteArrayOutputStream.write(sk, 83, 16);
-            byte[] byte_uuid = byteArrayOutputStream.toByteArray();
-            byteArrayOutputStream.reset();
-            byteArrayOutputStream.write(sk, 1, 16);
-            byte[] byte_secret_key = byteArrayOutputStream.toByteArray();
-            String uuid = new StringBuilder(hex(byte_uuid)).insert(8, "-").insert(13, "-").insert(18, "-").insert(23, "-").toString().toUpperCase();
-            String secret_key = hex(byte_secret_key);
-            System.out.println("uuid:："+uuid);
-            System.out.println("secret_key:"+secret_key);
-            Toast.makeText(this.activity, (CharSequence) "uuid:"+uuid, Toast.LENGTH_LONG).show();
-            return new String[] {uuid, secret_key};
-        }catch (Exception e){
-            Toast.makeText(this.activity, (CharSequence) "Error: 対応していないQRコードです", Toast.LENGTH_LONG).show();
-            return null;
-        }
-
+        String name = URLDecoder.decode(query[3].split("=")[1], "UTF-8");
+        byte[] sk =  Base64.decode(query[1].split("=")[1], Base64.DEFAULT);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byteArrayOutputStream.write(sk, 83, 16);
+        byte[] byte_uuid = byteArrayOutputStream.toByteArray();
+        byteArrayOutputStream.reset();
+        byteArrayOutputStream.write(sk, 1, 16);
+        byte[] byte_secret_key = byteArrayOutputStream.toByteArray();
+        String uuid = new StringBuilder(hex(byte_uuid)).insert(8, "-").insert(13, "-").insert(18, "-").insert(23, "-").toString().toUpperCase();
+        String secret_key = hex(byte_secret_key);
+        System.out.println("uuid:："+uuid);
+        System.out.println("secret_key:"+secret_key);
+        return new String[] {uuid, secret_key, name};
     }
     private String hex(byte[] data){
         byte[] decode_byte = Arrays.copyOf(data, data.length);
