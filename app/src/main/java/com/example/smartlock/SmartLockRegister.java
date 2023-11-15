@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.view.View;
 
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ExperimentalGetImage;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.Preview;
@@ -74,6 +75,7 @@ public class SmartLockRegister implements View.OnClickListener{
                     CameraSelector cameraSelector = new CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build();
                     imageAnalysis.setAnalyzer(cameraExecutor, new ImageAnalysis.Analyzer() {
                         @Override
+                        @ExperimentalGetImage
                         public void analyze(ImageProxy image) {
                             com.google.mlkit.vision.common.InputImage inputImage = com.google.mlkit.vision.common.InputImage.fromMediaImage(image.getImage(), image.getImageInfo().getRotationDegrees());
                             barcodeScanner.process(inputImage)
