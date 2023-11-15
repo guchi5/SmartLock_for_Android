@@ -9,15 +9,15 @@
 
     <Switch
         android:id="@+id/beacon_switch"
-        android:layout_width="103dp"
+        android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:text="Switch" />
+        android:text="@string/beacon_switch" />
 
     <Button
         android:id="@+id/add_beacon"
-        android:layout_width="103dp"
+        android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:text="Button" />
+        android:text="@string/add_beacon" />
 
     <Space
         android:layout_width="match_parent"
@@ -35,9 +35,9 @@
 
     <Button
         android:id="@+id/add_smartlock"
-        android:layout_width="103dp"
+        android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:text="Button" />
+        android:text="@string/add_smartlock" />
     <Space
         android:layout_width="match_parent"
         android:layout_height="20dp" />
