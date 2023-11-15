@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.util.Base64;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ExperimentalGetImage;
@@ -85,12 +86,12 @@ public class SmartLockRegister implements View.OnClickListener{
                                         for (Barcode barcode : barcodes) {
                                             if (barcode.getFormat() == Barcode.FORMAT_QR_CODE) {
                                                 String qrText = barcode.getRawValue();
-                                                // QRコードが見つかった場合の処理を行う
-                                                System.out.println("QRコード："+qrText);
-                                                handleQRCode(qrText);
-
                                                 provider.unbindAll();
                                                 alertDialog.dismiss();
+                                                // QRコードが見つかった場合の処理を行う
+                                                System.out.println("QRコード："+qrText);
+                                                String[] encode_qr =  handleQRCode(qrText);
+
                                             }
                                         }
                                         image.close(); // 画像をクローズしてリソースを解放
@@ -112,20 +113,27 @@ public class SmartLockRegister implements View.OnClickListener{
 
     }
 
-    private void handleQRCode(String url){
+    private String[] handleQRCode(String url){
         String[] query = url.split("&");
+        try{
+            byte[] sk =  Base64.decode(query[1].split("=")[1], Base64.DEFAULT);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            byteArrayOutputStream.write(sk, 83, 16);
+            byte[] byte_uuid = byteArrayOutputStream.toByteArray();
+            byteArrayOutputStream.reset();
+            byteArrayOutputStream.write(sk, 1, 16);
+            byte[] byte_secret_key = byteArrayOutputStream.toByteArray();
+            String uuid = new StringBuilder(hex(byte_uuid)).insert(8, "-").insert(13, "-").insert(18, "-").insert(23, "-").toString().toUpperCase();
+            String secret_key = hex(byte_secret_key);
+            System.out.println("uuid:："+uuid);
+            System.out.println("secret_key:"+secret_key);
+            Toast.makeText(this.activity, (CharSequence) "uuid:"+uuid, Toast.LENGTH_LONG).show();
+            return new String[] {uuid, secret_key};
+        }catch (Exception e){
+            Toast.makeText(this.activity, (CharSequence) "Error: 対応していないQRコードです", Toast.LENGTH_LONG).show();
+            return null;
+        }
 
-        byte[] sk =  Base64.decode(query[1].split("=")[1], Base64.DEFAULT);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        byteArrayOutputStream.write(sk, 83, 16);
-        byte[] byte_uuid = byteArrayOutputStream.toByteArray();
-        byteArrayOutputStream.reset();
-        byteArrayOutputStream.write(sk, 1, 16);
-        byte[] byte_secret_key = byteArrayOutputStream.toByteArray();
-        String uuid = new StringBuilder(hex(byte_uuid)).insert(8, "-").insert(13, "-").insert(18, "-").insert(23, "-").toString().toUpperCase();
-        String secret_key = hex(byte_secret_key);
-        System.out.println("uuid:："+uuid);
-        System.out.println("secret_key:"+secret_key);
     }
     private String hex(byte[] data){
         byte[] decode_byte = Arrays.copyOf(data, data.length);
