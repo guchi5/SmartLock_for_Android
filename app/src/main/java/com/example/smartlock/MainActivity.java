@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                     || this.checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("This app needs location and camera access");
-                builder.setMessage("Please grant location and camera access");
+                builder.setMessage("位置情報とカメラへのアクセスを許可してください");
                 builder.setPositiveButton(android.R.string.ok, null);
                 builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
@@ -68,8 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        PreviewView previewView = findViewById(R.id.viewFinder);
-        add_smart_lock = new SmartLockRegister(this, previewView);
+        add_smart_lock = new SmartLockRegister(this);
         Button addSmartLockBtn =findViewById(R.id.add_smartlock);
         addSmartLockBtn.setOnClickListener(add_smart_lock);
     }
