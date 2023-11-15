@@ -58,6 +58,7 @@ public class SmartLockRegister implements View.OnClickListener{
                 }
 
         );
+        builder.setTitle("QRコードをスキャン");
         builder.create();
         alertDialog = builder.show();
         cameraProvider .addListener(new Runnable() {
