@@ -3,6 +3,7 @@ package com.example.smartlock;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.util.Base64;
 import android.view.View;
 
 import androidx.camera.core.CameraSelector;
@@ -21,9 +22,10 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+import java.io.ByteArrayOutputStream;
 public class SmartLockRegister implements View.OnClickListener{
     private MainActivity activity;
     private PreviewView previewView;
@@ -85,6 +87,8 @@ public class SmartLockRegister implements View.OnClickListener{
                                                 String qrText = barcode.getRawValue();
                                                 // QRコードが見つかった場合の処理を行う
                                                 System.out.println("QRコード："+qrText);
+                                                handleQRCode(qrText);
+
                                                 provider.unbindAll();
                                                 alertDialog.dismiss();
                                             }
@@ -108,6 +112,30 @@ public class SmartLockRegister implements View.OnClickListener{
 
     }
 
+    private void handleQRCode(String url){
+        String[] query = url.split("&");
+
+        byte[] sk =  Base64.decode(query[1].split("=")[1], Base64.DEFAULT);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byteArrayOutputStream.write(sk, 83, 16);
+        byte[] byte_uuid = byteArrayOutputStream.toByteArray();
+        byteArrayOutputStream.reset();
+        byteArrayOutputStream.write(sk, 1, 16);
+        byte[] byte_secret_key = byteArrayOutputStream.toByteArray();
+        String uuid = new StringBuilder(hex(byte_uuid)).insert(8, "-").insert(13, "-").insert(18, "-").insert(23, "-").toString().toUpperCase();
+        String secret_key = hex(byte_secret_key);
+        System.out.println("uuid:："+uuid);
+        System.out.println("secret_key:"+secret_key);
+    }
+    private String hex(byte[] data){
+        byte[] decode_byte = Arrays.copyOf(data, data.length);
+        StringBuilder sb = new StringBuilder();
+        for (byte b : decode_byte) {
+            sb.append(String.format("%02x", b));
+        }
+        String ret = sb.toString();
+        return ret;
+    }
     @Override
     public void onClick(View v) {
         startCamera();
