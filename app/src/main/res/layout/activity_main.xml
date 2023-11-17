@@ -24,10 +24,10 @@
         android:layout_height="20dp" />
 
     <ListView
+        android:id="@+id/beacon_list"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:background="#6B8BC4"
-        />
+        android:background="#6B8BC4" />
 
     <Space
         android:layout_width="match_parent"

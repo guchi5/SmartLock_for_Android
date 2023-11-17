@@ -33,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
     private SmartLockRegister add_smart_lock;
     private SmartLockLister smartLockLister;
     private SmartLockCE smartLockCE;
+    private BeaconLister beaconLister;
+    private BeaconCE beaconCE;
+    private BeaconRegister beaconRegister;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,12 +82,21 @@ public class MainActivity extends AppCompatActivity {
         this.smartLockLister = new SmartLockLister(this, smartLockList, this.smartLockCE);
         smartLockList.setOnItemLongClickListener(this.smartLockLister);
         updateSmartLockView();
-
+        this.beaconCE = new BeaconCE(this);
+        ListView beaconList = (ListView)findViewById(R.id.beacon_list);
+        this.beaconLister = new BeaconLister(this, beaconList, this.beaconCE);
+        beaconList.setOnItemLongClickListener(this.beaconLister);
+        this.beaconRegister = new BeaconRegister(this, this.beaconCE);
+        Button addBeacon = findViewById(R.id.add_beacon);
+        addBeacon.setOnClickListener(this.beaconRegister);
     }
     public void updateSmartLockView(){
         smartLockLister.updateListView();
     }
 
+    public void updateBeaconView(){
+        beaconLister.updateListView();
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
