@@ -36,9 +36,10 @@ public class SmartLockRegister implements View.OnClickListener{
     private ProcessCameraProvider provider;
     private BarcodeScanner barcodeScanner;
     private ExecutorService cameraExecutor = Executors.newSingleThreadExecutor();
-    SmartLockRegister(MainActivity activity){
+    private SmartLockCE smartLockCE;
+    SmartLockRegister(MainActivity activity, SmartLockCE smartLockCE){
         this.activity = activity;
-
+        this.smartLockCE = smartLockCE;
         BarcodeScannerOptions options =
                 new BarcodeScannerOptions.Builder()
                         .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
@@ -95,11 +96,15 @@ public class SmartLockRegister implements View.OnClickListener{
                                                 String[] encode_qr = new String[0];
                                                 try {
                                                     encode_qr = handleQRCode(qrText);
-                                                    activity.updateSmartLockView(encode_qr[2]);
-                                                    Toast.makeText(activity, (CharSequence) "uuid:"+encode_qr[0], Toast.LENGTH_LONG).show();
-
+                                                    if(encode_qr != null){
+                                                        if(smartLockCE.addSmartLock(smartLockCE.createSmartLock(encode_qr))){
+                                                            activity.updateSmartLockView();
+                                                            Toast.makeText(activity, (CharSequence) "追加完了", Toast.LENGTH_LONG).show();
+                                                        }else{
+                                                            Toast.makeText(activity, (CharSequence) "すでに追加済みです", Toast.LENGTH_LONG).show();
+                                                        }
+                                                    }
                                                 } catch (UnsupportedEncodingException e) {
-                                                    Toast.makeText(activity, (CharSequence) "Error: 対応していないQRコードです", Toast.LENGTH_LONG).show();
                                                     throw new RuntimeException(e);
                                                 }
                                             }
@@ -124,20 +129,26 @@ public class SmartLockRegister implements View.OnClickListener{
     }
 
     private String[] handleQRCode(String url) throws UnsupportedEncodingException {
-        String[] query = url.split("&");
-        String name = URLDecoder.decode(query[3].split("=")[1], "UTF-8");
-        byte[] sk =  Base64.decode(query[1].split("=")[1], Base64.DEFAULT);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        byteArrayOutputStream.write(sk, 83, 16);
-        byte[] byte_uuid = byteArrayOutputStream.toByteArray();
-        byteArrayOutputStream.reset();
-        byteArrayOutputStream.write(sk, 1, 16);
-        byte[] byte_secret_key = byteArrayOutputStream.toByteArray();
-        String uuid = new StringBuilder(hex(byte_uuid)).insert(8, "-").insert(13, "-").insert(18, "-").insert(23, "-").toString().toUpperCase();
-        String secret_key = hex(byte_secret_key);
-        System.out.println("uuid:："+uuid);
-        System.out.println("secret_key:"+secret_key);
-        return new String[] {uuid, secret_key, name};
+        try{
+            String[] query = url.split("&");
+            String name = URLDecoder.decode(query[3].split("=")[1], "UTF-8");
+            byte[] sk =  Base64.decode(query[1].split("=")[1], Base64.DEFAULT);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            byteArrayOutputStream.write(sk, 83, 16);
+            byte[] byte_uuid = byteArrayOutputStream.toByteArray();
+            byteArrayOutputStream.reset();
+            byteArrayOutputStream.write(sk, 1, 16);
+            byte[] byte_secret_key = byteArrayOutputStream.toByteArray();
+            String uuid = new StringBuilder(hex(byte_uuid)).insert(8, "-").insert(13, "-").insert(18, "-").insert(23, "-").toString().toUpperCase();
+            String secret_key = hex(byte_secret_key);
+            System.out.println("uuid:："+uuid);
+            System.out.println("secret_key:"+secret_key);
+            return new String[] {uuid, secret_key, name};
+        }catch (Exception e){
+            Toast.makeText(activity, (CharSequence) "Error: 対応していないQRコードです", Toast.LENGTH_LONG).show();
+            return null;
+        }
+
     }
     private String hex(byte[] data){
         byte[] decode_byte = Arrays.copyOf(data, data.length);

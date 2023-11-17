@@ -1,4 +1,4 @@
 package com.example.smartlock;
 
-public class BeaconDB {
+public interface BeaconDB {
 }

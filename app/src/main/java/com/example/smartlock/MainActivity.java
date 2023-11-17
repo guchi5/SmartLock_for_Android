@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private BeaconGateway b_gateway;
     private SmartLockRegister add_smart_lock;
     private SmartLockLister smartLockLister;
+    private SmartLockCE smartLockCE;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,16 +71,18 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        add_smart_lock = new SmartLockRegister(this);
+        this.smartLockCE = new SmartLockCE(this);
+        add_smart_lock = new SmartLockRegister(this, this.smartLockCE);
         Button addSmartLockBtn =findViewById(R.id.add_smartlock);
         addSmartLockBtn.setOnClickListener(add_smart_lock);
         ListView smartLockList = (ListView)findViewById(R.id.smart_lock_list);
-        this.smartLockLister = new SmartLockLister(this, smartLockList);
+        this.smartLockLister = new SmartLockLister(this, smartLockList, this.smartLockCE);
         smartLockList.setOnItemLongClickListener(this.smartLockLister);
+        updateSmartLockView();
 
     }
-    public void updateSmartLockView(String smartLock){
-        smartLockLister.updateListView(smartLock);
+    public void updateSmartLockView(){
+        smartLockLister.updateListView();
     }
 
     @Override

@@ -23,7 +23,7 @@ public class BeaconGateway {
         beaconManager = BeaconManager.getInstanceForApplication(this.activity);
         beaconManager.getBeaconParsers().add(new BeaconParser().
                 setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
-        this.my_region = new Region("myMonitoringUniqueId", Identifier.parse("00000000-9BD0-1001-B000-001C4D778244"), null, null);
+        this.my_region = new Region("myMonitoringUniqueId", Identifier.parse("00000000-9BD0-1001-B000-001C4D778244"), null, Identifier.fromInt(3));
         beaconManager.addMonitorNotifier(new MonitorNotifier() {
             @Override
             public void didEnterRegion(Region region) {
