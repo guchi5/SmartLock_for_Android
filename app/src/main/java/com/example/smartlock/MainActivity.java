@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         ListView beaconList = (ListView)findViewById(R.id.beacon_list);
         this.beaconLister = new BeaconLister(this, beaconList, this.beaconCE);
         beaconList.setOnItemLongClickListener(this.beaconLister);
-        this.beaconRegister = new BeaconRegister(this, this.beaconCE);
+        this.beaconRegister = new BeaconRegister(this, this.beaconCE, this.b_gateway);
         Button addBeacon = findViewById(R.id.add_beacon);
         addBeacon.setOnClickListener(this.beaconRegister);
     }

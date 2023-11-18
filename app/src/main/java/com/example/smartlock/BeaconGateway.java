@@ -10,6 +10,7 @@ import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class BeaconGateway {
@@ -17,13 +18,15 @@ public class BeaconGateway {
     private MainActivity activity;
     protected static final String TAG = "MonitoringActivity";
     private Region my_region;
+    private Collection<Beacon> beacon_list;
 
     BeaconGateway(MainActivity activity){
         this.activity = activity;
+        this.beacon_list = new ArrayList<>();
         beaconManager = BeaconManager.getInstanceForApplication(this.activity);
         beaconManager.getBeaconParsers().add(new BeaconParser().
                 setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
-        this.my_region = new Region("myMonitoringUniqueId", Identifier.parse("00000000-9BD0-1001-B000-001C4D778244"), null, Identifier.fromInt(3));
+        this.my_region = new Region("myMonitoringUniqueId", null, null, null);
         beaconManager.addMonitorNotifier(new MonitorNotifier() {
             @Override
             public void didEnterRegion(Region region) {
@@ -33,6 +36,7 @@ public class BeaconGateway {
             @Override
             public void didExitRegion(Region region) {
                 Log.i(TAG, "I no longer see an beacon");
+                beacon_list.clear();
             }
 
             @Override
@@ -46,10 +50,15 @@ public class BeaconGateway {
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
                 if (beacons.size() > 0) {
                     Log.i(TAG, "The first beacon I see is about "+beacons.iterator().next().getDistance()+" meters away.");
+                    beacon_list = beacons;
                 }
             }
         });
 
+    }
+
+    public Collection<Beacon> getBeacons(){
+        return beacon_list;
     }
 
     public void start(){
@@ -60,6 +69,7 @@ public class BeaconGateway {
     public void stop(){
         beaconManager.stopMonitoring(my_region);
         beaconManager.stopRangingBeacons(my_region);
+        beacon_list.clear();
     }
 
 }
