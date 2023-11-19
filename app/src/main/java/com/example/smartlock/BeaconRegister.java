@@ -61,9 +61,14 @@ public class BeaconRegister implements View.OnClickListener{
                 try{
                     com.example.smartlock.Beacon beacon = new com.example.smartlock.Beacon(data[0].split("UUID:")[1], Integer.parseInt(data[1].split("major:")[1]), Integer.parseInt(data[2].split("minor:")[1]));
                     System.out.println("UUID"+beacon.getUUID());
-                    beaconCE.addBeacon(beacon);
-                    activity.updateBeaconView();
-                    Toast.makeText(activity, (CharSequence) parent.getItemAtPosition(position), Toast.LENGTH_LONG).show();
+                    if(beaconCE.addBeacon(beacon)){
+                        activity.updateBeaconView();
+                        Toast.makeText(activity, (CharSequence) parent.getItemAtPosition(position), Toast.LENGTH_LONG).show();
+                        alertDialog.dismiss();
+                    }else{
+                        Toast.makeText(activity, (CharSequence) "既に登録済みです", Toast.LENGTH_LONG).show();
+                    }
+
                 }catch (Exception e){
                     Toast.makeText(activity, (CharSequence) "登録できません", Toast.LENGTH_LONG).show();
                 }

@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         ListView smartLockList = (ListView)findViewById(R.id.smart_lock_list);
         this.smartLockLister = new SmartLockLister(this, smartLockList, this.smartLockCE);
         smartLockList.setOnItemLongClickListener(this.smartLockLister);
-        updateSmartLockView();
         this.beaconCE = new BeaconCE(this);
         ListView beaconList = (ListView)findViewById(R.id.beacon_list);
         this.beaconLister = new BeaconLister(this, beaconList, this.beaconCE);
@@ -89,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
         this.beaconRegister = new BeaconRegister(this, this.beaconCE, this.b_gateway);
         Button addBeacon = findViewById(R.id.add_beacon);
         addBeacon.setOnClickListener(this.beaconRegister);
+        updateBeaconView();
+        updateSmartLockView();
     }
     public void updateSmartLockView(){
         smartLockLister.updateListView();
