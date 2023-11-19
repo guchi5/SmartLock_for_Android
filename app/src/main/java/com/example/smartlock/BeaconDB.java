@@ -11,4 +11,6 @@ public interface BeaconDB {
 
     boolean addBeacon(Beacon beacon);
     List<Beacon> getBeacon();
+
+    boolean isRegistered(String uuid, int major, int minor);
 }

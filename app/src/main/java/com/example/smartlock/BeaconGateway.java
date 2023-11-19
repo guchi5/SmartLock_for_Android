@@ -48,6 +48,7 @@ public class BeaconGateway {
 
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+                beacon_list.clear();
                 if (beacons.size() > 0) {
                     Log.i(TAG, "The first beacon I see is about "+beacons.iterator().next().getDistance()+" meters away.");
                     beacon_list = beacons;
@@ -57,11 +58,12 @@ public class BeaconGateway {
 
     }
 
-    public Collection<Beacon> getBeacons(){
+    public synchronized Collection<Beacon> getBeacons(){
         return beacon_list;
     }
 
     public void start(){
+        beacon_list.clear();
         beaconManager.startMonitoring(my_region);
         beaconManager.startRangingBeacons(my_region);
     }

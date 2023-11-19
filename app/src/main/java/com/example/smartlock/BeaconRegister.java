@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import org.altbeacon.beacon.Beacon;
@@ -33,6 +34,8 @@ public class BeaconRegister implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
+        Switch sw = activity.findViewById(R.id.beacon_switch);
+        sw.setChecked(false);
         final View beacon_list =
                 activity.getLayoutInflater().inflate(R.layout.beacon_list, null, false);
         ListView beacon_list_view = beacon_list.findViewById(R.id.beacon_list);
@@ -59,7 +62,7 @@ public class BeaconRegister implements View.OnClickListener{
                 String[] data = format.split("\n");
                 System.out.println(data.length);
                 try{
-                    com.example.smartlock.Beacon beacon = new com.example.smartlock.Beacon(data[0].split("UUID:")[1], Integer.parseInt(data[1].split("major:")[1]), Integer.parseInt(data[2].split("minor:")[1]));
+                    com.example.smartlock.Beacon beacon = BeaconCE.getBeaconInstance(data[0].split("UUID:")[1], Integer.parseInt(data[1].split("major:")[1]), Integer.parseInt(data[2].split("minor:")[1]));
                     System.out.println("UUID"+beacon.getUUID());
                     if(beaconCE.addBeacon(beacon)){
                         activity.updateBeaconView();

@@ -146,11 +146,7 @@ public class DatabaseCE extends SQLiteOpenHelper implements SmartLockDB, BeaconD
     }
 
     private Beacon toBeacon(Cursor cursor) {
-        Beacon beacon = new Beacon();
-        beacon.setUUID(cursor.getString(0));
-        beacon.setMinor(cursor.getInt(1));
-        beacon.setMajor(cursor.getInt(2));
-        return beacon;
+        return BeaconCE.getBeaconInstance(cursor.getString(0), cursor.getInt(1), cursor.getInt(2));
     }
 
     @Override
@@ -168,6 +164,33 @@ public class DatabaseCE extends SQLiteOpenHelper implements SmartLockDB, BeaconD
             db.close();
         }
         return beacons;
+
+    }
+
+    @Override
+    public boolean isRegistered(String uuid, int major, int minor) {
+        boolean existence = false;
+        String query = String.format("SELECT COUNT(*) FROM %s WHERE %s='%s' and %s=%d and %s=%d",
+                TABLE_BEACONS,
+                FIELD_BEACON_UUID,
+                uuid,
+                FIELD_BEACON_MAJOR,
+                major,
+                FIELD_BEACON_MINOR,
+                minor
+        );
+        SQLiteDatabase db = this.getWritableDatabase();
+        try{
+            Cursor cursor = db.rawQuery(query, null);
+            cursor.moveToNext();
+            if(cursor.getInt(0) >= 1){
+                existence = true;
+            }
+
+        }finally {
+            db.close();
+            return existence;
+        }
 
     }
 }

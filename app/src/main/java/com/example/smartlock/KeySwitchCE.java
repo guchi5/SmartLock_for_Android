@@ -1,11 +1,23 @@
 package com.example.smartlock;
 
-public class KeySwitchCE implements Runnable{
-    KeySwitchCE(SmartLock smartLock){
+import android.os.Handler;
 
+public class KeySwitchCE{
+    private SmartLock smartLock;
+    KeySwitchCE(SmartLock smartLock){
+        this.smartLock = smartLock;
     }
 
-    @Override
-    public void run() {
+
+    public static boolean unlock(SmartLock smartLock){
+        return APIGateway.unlock(smartLock);
+    }
+
+    public boolean lock(SmartLock smartLock){
+        return APIGateway.lock(smartLock);
+    }
+
+    public boolean toggle(SmartLock smartLock){
+        return APIGateway.toggle(smartLock);
     }
 }

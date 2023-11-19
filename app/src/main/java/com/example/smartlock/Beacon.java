@@ -9,9 +9,6 @@ public class Beacon {
         this.major = major;
         this.minor = minor;
     }
-    Beacon(){
-
-    }
 
     public String getUUID() {
         return uuid;

@@ -3,11 +3,14 @@ package com.example.smartlock;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.view.PreviewView;
+import androidx.core.os.HandlerCompat;
 
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.Manifest;
 import android.view.View;
@@ -25,6 +28,8 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
@@ -36,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     private BeaconLister beaconLister;
     private BeaconCE beaconCE;
     private BeaconRegister beaconRegister;
+    private AutoUnlocker autoUnlocker;
+    private MainActivity activity;
+    private Handler handler;
+    private KeySwitchCE keySwitchCE;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,18 +71,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         b_gateway = new BeaconGateway(this);
-        Switch sw = findViewById(R.id.beacon_switch);
-        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // The toggle is enabled
-                    b_gateway.start();
-                } else {
-                    // The toggle is disabled
-                    b_gateway.stop();
-                }
-            }
-        });
+
         this.smartLockCE = new SmartLockCE(this);
         add_smart_lock = new SmartLockRegister(this, this.smartLockCE);
         Button addSmartLockBtn =findViewById(R.id.add_smartlock);
@@ -88,8 +86,31 @@ public class MainActivity extends AppCompatActivity {
         this.beaconRegister = new BeaconRegister(this, this.beaconCE, this.b_gateway);
         Button addBeacon = findViewById(R.id.add_beacon);
         addBeacon.setOnClickListener(this.beaconRegister);
+
+
+        this.activity = this;
+        Switch sw = findViewById(R.id.beacon_switch);
+
+        sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    b_gateway.start();
+                    Looper mainLooper = Looper.getMainLooper();  // (1)
+                    handler = HandlerCompat.createAsync(mainLooper);  // (2)
+                    autoUnlocker = new AutoUnlocker(activity, b_gateway, beaconCE, handler, smartLockCE);
+                    ExecutorService executorService  = Executors.newSingleThreadExecutor();
+                    executorService.submit(autoUnlocker);
+                }else{
+                    b_gateway.stop();
+                }
+            }
+        });
+
+
         updateBeaconView();
         updateSmartLockView();
+
     }
     public void updateSmartLockView(){
         smartLockLister.updateListView();

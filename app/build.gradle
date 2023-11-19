@@ -48,4 +48,10 @@ dependencies {
     implementation "androidx.camera:camera-extensions:${camerax_version}"
 
     implementation 'com.google.mlkit:barcode-scanning:17.2.0'
+
+    implementation 'com.madgag.spongycastle:core:1.52.0.0'
+    implementation 'com.madgag.spongycastle:prov:1.52.0.0'
+    implementation 'com.madgag.spongycastle:pkix:1.52.0.0'
+    implementation 'com.madgag.spongycastle:pg:1.52.0.0'
+    implementation 'com.madgag.spongycastle:pkix:1.52.0.0'
 }
