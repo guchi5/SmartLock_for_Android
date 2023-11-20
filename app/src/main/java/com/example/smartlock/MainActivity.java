@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                     ExecutorService executorService  = Executors.newSingleThreadExecutor();
                     executorService.submit(autoUnlocker);
                 }else{
+                    handler.removeCallbacks(null);
                     b_gateway.stop();
                 }
             }
