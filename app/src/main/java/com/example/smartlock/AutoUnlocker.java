@@ -8,6 +8,7 @@ import android.widget.Toast;
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.Identifier;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,12 +32,11 @@ public class AutoUnlocker implements Runnable {
 
     @Override
     public void run() {
-        while(true){
-            System.out.println("定期実行テスト");
-            Iterator<Beacon> beacons = beaconGateway.getBeacons().iterator();
-            while(beacons.hasNext()){
-                List<Identifier> beacon = beacons.next().getIdentifiers();
-                boolean exist = beaconCE.isRegistered(beacon.get(0).toString(), beacon.get(1).toInt(), beacon.get(2).toInt());
+        while(sw.isChecked()){
+            List<Beacon> beacons = new ArrayList<>(beaconGateway.getBeacons());
+            System.out.println("定期実行テスト "+beacons.size());
+            for(Beacon beacon : beacons){
+                boolean exist = beaconCE.isRegistered(beacon.getIdentifiers().get(0).toString(), beacon.getIdentifiers().get(1).toInt(), beacon.getIdentifiers().get(2).toInt());
                 if(exist){
                     System.out.println("発見！");
                     List<SmartLock> smartLocks =  smartLockCE.getSmartLock();
@@ -51,10 +51,6 @@ public class AutoUnlocker implements Runnable {
                 }else{
                     System.out.println("未発見");
                 }
-            }
-
-            if(!sw.isChecked()){
-                break;
             }
         }
     }
@@ -71,11 +67,12 @@ class PostExecutor implements Runnable {  // (4)
     @Override
     public void run() {
         Log.i("Async-PostExecutor", "ここにUIスレッドで行いたい処理を記述する");  // (5)
+        sw.setChecked(false);
         if(result){
             Toast.makeText(activity, (CharSequence) "開錠しました", Toast.LENGTH_LONG).show();
         }else{
             Toast.makeText(activity, (CharSequence) "開錠出来ませんでした", Toast.LENGTH_LONG).show();
+            sw.setChecked(true);
         }
-        sw.setChecked(false);
     }
 }
