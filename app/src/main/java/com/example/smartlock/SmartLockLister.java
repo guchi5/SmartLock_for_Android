@@ -47,7 +47,8 @@ public class SmartLockLister implements AdapterView.OnItemLongClickListener {
                 dataList,
                 R.layout.row,
                 new String[] { "text1" },
-                new int[] { R.id.text1});
+                new int[] { R.id.text1},
+                smartLockCE);
         listView.setAdapter(adapter);
     }
 
