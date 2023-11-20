@@ -9,7 +9,9 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SmartLockLister implements AdapterView.OnItemLongClickListener {
     private MainActivity activity;
@@ -30,12 +32,22 @@ public class SmartLockLister implements AdapterView.OnItemLongClickListener {
     public void updateListView(){
         List<SmartLock> smartLocks = smartLockCE.getSmartLocks();
         ArrayList<String> items = new ArrayList<>();
+        Map<String, String> data;
+        List<Map<String, String>> dataList = new ArrayList<Map<String, String>>();
 
         for(SmartLock smartLock : smartLocks){
             items.add(smartLock.getName());
+            data = new HashMap<String, String>();
+            data.put("text1", smartLock.getName());
+            dataList.add(data);
         }
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(activity, android.R.layout.simple_list_item_1, items);
+
+        KeyListViewAdapter adapter = new KeyListViewAdapter(
+                activity,
+                dataList,
+                R.layout.row,
+                new String[] { "text1" },
+                new int[] { R.id.text1});
         listView.setAdapter(adapter);
     }
 

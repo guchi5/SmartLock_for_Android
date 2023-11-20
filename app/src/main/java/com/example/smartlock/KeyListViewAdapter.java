@@ -41,7 +41,7 @@ public class KeyListViewAdapter extends SimpleAdapter {
             view = inflater.inflate(R.layout.row, parent, false);
 
             holder = new ViewHolder();
-            holder.text1 = (TextView) view.findViewById(android.R.id.text1);
+            holder.text1 = (TextView) view.findViewById(R.id.text1);
 
             view.setTag(holder);
         } else {
@@ -50,7 +50,7 @@ public class KeyListViewAdapter extends SimpleAdapter {
         }
 
         String text1 = ((HashMap<?, ?>) listData.get(position)).get("text1").toString();
-        //holder.text1.setText("text1");
+        holder.text1.setText(text1);
 
         // セル上にあるボタンの処理
         Button btn = (Button) view.findViewById(R.id.rowbutton);
@@ -59,7 +59,7 @@ public class KeyListViewAdapter extends SimpleAdapter {
             @Override
             public void onClick(View arg0) {
                 // 選択したセルの文字を赤色にする
-                //holder.text1.setTextColor(Color.RED);
+                holder.text1.setTextColor(Color.RED);
                 System.out.println("押された");
             }
         });

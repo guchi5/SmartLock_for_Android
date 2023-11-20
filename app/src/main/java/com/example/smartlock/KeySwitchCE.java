@@ -13,11 +13,11 @@ public class KeySwitchCE{
         return APIGateway.unlock(smartLock);
     }
 
-    public boolean lock(SmartLock smartLock){
+    public static boolean lock(SmartLock smartLock){
         return APIGateway.lock(smartLock);
     }
 
-    public boolean toggle(SmartLock smartLock){
+    public static boolean toggle(SmartLock smartLock){
         return APIGateway.toggle(smartLock);
     }
 }
