@@ -30,4 +30,8 @@ public class BeaconCE {
     public synchronized boolean isRegistered(String uuid, int major, int minor){
         return db.isRegistered(uuid, major, minor);
     }
+
+    public synchronized  boolean deleteBeacon(Beacon beacon){
+        return db.deleteBeacon(beacon);
+    }
 }

@@ -13,4 +13,6 @@ public interface BeaconDB {
     List<Beacon> getBeacon();
 
     boolean isRegistered(String uuid, int major, int minor);
+
+    boolean deleteBeacon(Beacon beacon);
 }

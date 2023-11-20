@@ -1,5 +1,7 @@
 package com.example.smartlock;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,7 +22,11 @@ public class BeaconLister implements AdapterView.OnItemLongClickListener {
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        return false;
+        String format = (String) parent.getItemAtPosition(position);
+        String[] data = format.split("\n");
+        Beacon beacon = BeaconCE.getBeaconInstance(data[0].split("UUID:")[1], Integer.parseInt(data[1].split("major:")[1]), Integer.parseInt(data[2].split("minor:")[1]));
+        deleteBeacon(beacon);
+        return true;
     }
 
     public void updateListView(){
@@ -28,10 +34,44 @@ public class BeaconLister implements AdapterView.OnItemLongClickListener {
         ArrayList<String> items = new ArrayList<>();
 
         for(Beacon beacon : smartLocks){
-            items.add(beacon.getUUID());
+            String format = String.format("UUID:%s\nmajor:%d\nminor:%d",beacon.getUUID(), beacon.getMajor(), beacon.getMinor());
+            items.add(format);
         }
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(activity, android.R.layout.simple_list_item_1, items);
         listView.setAdapter(adapter);
+    }
+
+    private void deleteBeacon(Beacon beacon){
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setIcon(R.drawable.ic_launcher_foreground);
+        builder.setTitle("ビーコンを削除");
+        builder.setMessage("UUID"+beacon.getUUID()+"\nビーコンを削除しますか？");
+        builder.setNeutralButton
+                ("キャンセル",
+                        new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface,
+                                                int i)
+                            {
+                                // Nothing to do.
+                            }
+                        });
+
+        builder.setPositiveButton("削除",
+                new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        beaconCE.deleteBeacon(beacon);
+                        System.out.println("ビーコン削除");
+                        updateListView();
+                    }
+                }
+        );
+
+        builder.create();
+        builder.show();
+
     }
 }

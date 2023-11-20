@@ -193,4 +193,26 @@ public class DatabaseCE extends SQLiteOpenHelper implements SmartLockDB, BeaconD
         }
 
     }
+
+    @Override
+    public boolean deleteBeacon(Beacon beacon) {
+        Log.d(LOGTAG, "DELETE" + beacon);
+        SQLiteDatabase db = this.getWritableDatabase();
+        long id;
+        try{
+            id = db.delete(TABLE_BEACONS,
+                    FIELD_BEACON_UUID+"= ? AND "+FIELD_BEACON_MAJOR+"=? AND "+FIELD_BEACON_MINOR+"=?"
+                    , new String[]{beacon.getUUID(),
+                            String.valueOf(beacon.getMajor()),
+                            String.valueOf(beacon.getMinor())});
+        }finally {
+            db.close();
+        }
+        if(id!=-1){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
 }
