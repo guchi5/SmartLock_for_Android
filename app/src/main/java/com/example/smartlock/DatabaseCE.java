@@ -104,7 +104,7 @@ public class DatabaseCE extends SQLiteOpenHelper implements SmartLockDB, BeaconD
     @Override
     public List<SmartLock> getSmartLocks(){
         List<SmartLock> smartLocks = new LinkedList<>();
-        String query = String.format("SELECT * FROM %s", TABLE_SMART_LOCKS);
+        String query = String.format("SELECT * FROM %s ORDER BY %s", TABLE_SMART_LOCKS, FIELD_SMART_LOCK_SECRET_KEY);
         SQLiteDatabase db = this.getWritableDatabase();
         try{
             Cursor cursor = db.rawQuery(query, null);
@@ -116,6 +116,35 @@ public class DatabaseCE extends SQLiteOpenHelper implements SmartLockDB, BeaconD
             db.close();
         }
         return smartLocks;
+    }
+
+    @Override
+    public boolean deleteSmartLock(SmartLock smartLock) {
+        Log.d(LOGTAG, "DELETE" + smartLock.getName());
+        SQLiteDatabase db = this.getWritableDatabase();
+        long id;
+        try{
+            id = db.delete(TABLE_SMART_LOCKS,
+                    FIELD_SMART_LOCK_UUID+"= ? AND "+FIELD_SMART_LOCK_SECRET_KEY+"=?"
+                    , new String[]{smartLock.getUUID(),
+                            String.valueOf(smartLock.getSecretKey()),
+                    });
+        }finally {
+            db.close();
+        }
+        if(id!=-1){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public SmartLock getSmartLockAt(int position) {
+        Log.d(LOGTAG, "SEARCH:" + position);
+        SQLiteDatabase db = this.getWritableDatabase();
+        List<SmartLock> smartLocks =  getSmartLocks();
+        return smartLocks.get(position);
     }
 
     @Override

@@ -56,6 +56,7 @@ public class SmartLockRegister implements View.OnClickListener{
         previewView = camearaView.findViewById(R.id.viewFinder);
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setView(camearaView);
+        builder.setIcon(android.R.drawable.ic_menu_camera);
         builder.setOnDismissListener(
                 new DialogInterface.OnDismissListener() {
                     @Override

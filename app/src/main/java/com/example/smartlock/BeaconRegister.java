@@ -41,6 +41,7 @@ public class BeaconRegister implements View.OnClickListener{
         ListView beacon_list_view = beacon_list.findViewById(R.id.beacon_list);
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setView(beacon_list);
+        builder.setIcon(android.R.drawable.ic_search_category_default);
         builder.setOnDismissListener(
                 new DialogInterface.OnDismissListener() {
                     @Override

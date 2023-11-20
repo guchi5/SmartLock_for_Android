@@ -47,10 +47,10 @@ public class AutoUnlocker implements Runnable {
                 boolean exist = beaconCE.isRegistered(beacon.getIdentifiers().get(0).toString(), beacon.getIdentifiers().get(1).toInt(), beacon.getIdentifiers().get(2).toInt());
                 if(exist){
                     System.out.println("発見！");
-                    List<SmartLock> smartLocks =  smartLockCE.getSmartLock();
-                    beaconGateway.stop();
+                    List<SmartLock> smartLocks =  smartLockCE.getSmartLocks();
+
                     for(SmartLock smartLock : smartLocks){
-                        if(true){
+                        if(KeySwitchCE.unlock(smartLock)){
                             flag = true;
                         }else{
                             Toast.makeText(activity, (CharSequence) "開錠出来ませんでした", Toast.LENGTH_LONG).show();

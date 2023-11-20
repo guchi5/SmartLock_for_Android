@@ -19,8 +19,16 @@ public class SmartLockCE {
     }
 
 
-    public synchronized List<SmartLock> getSmartLock() {
+    public synchronized List<SmartLock> getSmartLocks() {
         return db.getSmartLocks();
+    }
+
+    public synchronized SmartLock getSmartLockAt(int position){
+        return db.getSmartLockAt(position);
+    }
+
+    public synchronized boolean deleteSmartLock(SmartLock smartLock){
+        return db.deleteSmartLock(smartLock);
     }
 
     public SmartLock createSmartLock(String[] data){

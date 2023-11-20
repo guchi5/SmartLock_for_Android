@@ -10,4 +10,6 @@ public interface SmartLockDB {
 
     public boolean addSmartLock(SmartLock smartLock);
     public List<SmartLock> getSmartLocks();
+    boolean deleteSmartLock(SmartLock smartLock);
+    SmartLock getSmartLockAt(int position);
 }

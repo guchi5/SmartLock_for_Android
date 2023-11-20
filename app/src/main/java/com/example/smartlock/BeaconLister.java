@@ -44,9 +44,9 @@ public class BeaconLister implements AdapterView.OnItemLongClickListener {
 
     private void deleteBeacon(Beacon beacon){
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setIcon(R.drawable.ic_launcher_foreground);
+        builder.setIcon(android.R.drawable.ic_delete);
         builder.setTitle("ビーコンを削除");
-        builder.setMessage("UUID"+beacon.getUUID()+"\nビーコンを削除しますか？");
+        builder.setMessage("UUID: "+beacon.getUUID()+"\nビーコンを削除しますか？");
         builder.setNeutralButton
                 ("キャンセル",
                         new DialogInterface.OnClickListener()
