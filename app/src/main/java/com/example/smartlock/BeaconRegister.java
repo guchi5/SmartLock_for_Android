@@ -45,8 +45,8 @@ public class BeaconRegister implements View.OnClickListener{
                 new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialog) {
-                        beaconGateway.stop();
                         countDownTimer.cancel();
+                        beaconGateway.stop();
                     }
                 }
 

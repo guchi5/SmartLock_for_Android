@@ -38,6 +38,8 @@ public class AutoUnlocker implements Runnable {
     @Override
     public void run() {
         boolean flag = false;
+        beaconGateway.clear();
+        sleep(3000);
         if(sw.isChecked()){
             List<Beacon> beacons = new ArrayList<>(beaconGateway.getBeacons());
             System.out.println("定期実行テスト "+beacons.size());
@@ -48,7 +50,7 @@ public class AutoUnlocker implements Runnable {
                     List<SmartLock> smartLocks =  smartLockCE.getSmartLock();
                     beaconGateway.stop();
                     for(SmartLock smartLock : smartLocks){
-                        if(KeySwitchCE.unlock(smartLock)){
+                        if(true){
                             flag = true;
                         }else{
                             Toast.makeText(activity, (CharSequence) "開錠出来ませんでした", Toast.LENGTH_LONG).show();
@@ -63,6 +65,16 @@ public class AutoUnlocker implements Runnable {
 
 
     }
+    public synchronized void sleep(long msec)
+    {
+        try
+        {
+
+            System.out.println("待機");
+            wait(msec);
+        }catch(InterruptedException e){}
+    }
+
 }
 class PostExecutor implements Runnable {  // (4)
     private Switch sw;

@@ -74,4 +74,8 @@ public class BeaconGateway {
         beacon_list.clear();
     }
 
+    public void clear(){
+        beacon_list.clear();
+    }
+
 }
