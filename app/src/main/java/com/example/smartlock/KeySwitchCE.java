@@ -17,15 +17,15 @@ public class KeySwitchCE implements Runnable {
     }
 
 
-    public static boolean unlock(SmartLock smartLock){
+    public static synchronized boolean unlock(SmartLock smartLock){
         return APIGateway.unlock(smartLock);
     }
 
-    public static boolean lock(SmartLock smartLock){
+    public static synchronized boolean lock(SmartLock smartLock){
         return APIGateway.lock(smartLock);
     }
 
-    public static boolean toggle(SmartLock smartLock){
+    public static synchronized boolean toggle(SmartLock smartLock){
         return APIGateway.toggle(smartLock);
     }
 
@@ -33,13 +33,13 @@ public class KeySwitchCE implements Runnable {
     public void run() {
         switch (cmd){
             case UNLOCK:
-                APIGateway.unlock(smartLock);
+                unlock(smartLock);
                 break;
             case LOCK:
-                APIGateway.lock(smartLock);
+                lock(smartLock);
                 break;
             case TOGGLE:
-                APIGateway.toggle(smartLock);
+                toggle(smartLock);
                 break;
             default:
                 System.out.println("コマンドエラー: 正しいコマンドを入力して下さい");

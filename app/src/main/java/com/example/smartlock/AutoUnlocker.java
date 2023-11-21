@@ -12,6 +12,7 @@ import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.Identifier;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -46,6 +47,20 @@ public class AutoUnlocker implements Runnable {
             for(Beacon beacon : beacons){
                 boolean exist = beaconCE.isRegistered(beacon.getIdentifiers().get(0).toString(), beacon.getIdentifiers().get(1).toInt(), beacon.getIdentifiers().get(2).toInt());
                 if(exist){
+                    com.example.smartlock.Beacon registed_beacon = beaconCE.getBeacon(beacon.getIdentifiers().get(0).toString(), beacon.getIdentifiers().get(1).toInt(), beacon.getIdentifiers().get(2).toInt());
+                    long nowTime = System.currentTimeMillis();
+                    if(registed_beacon.getDate() == null){
+                        registed_beacon.setDate(new Date(nowTime));
+                    }
+                    if(nowTime-registed_beacon.getDate().getTime()>(30*60)*1000){
+                        registed_beacon.setDate(new Date(nowTime));
+                        beaconCE.updateBeacon(registed_beacon);
+                    }else{
+                        registed_beacon.setDate(new Date(nowTime));
+                        beaconCE.updateBeacon(registed_beacon);
+                        continue;
+                    }
+
                     System.out.println("発見！");
                     List<SmartLock> smartLocks =  smartLockCE.getSmartLocks();
 
@@ -56,6 +71,10 @@ public class AutoUnlocker implements Runnable {
                             Toast.makeText(activity, (CharSequence) "開錠出来ませんでした", Toast.LENGTH_LONG).show();
                         }
                     }
+                    if(flag){
+                        break;
+                    }
+
                 }else{
                     System.out.println("未発見");
                 }
@@ -92,8 +111,9 @@ class PostExecutor implements Runnable {  // (4)
         Log.i("Async-PostExecutor", "ここにUIスレッドで行いたい処理を記述する");  // (5)
         if(result){
             Toast.makeText(activity, (CharSequence) "開錠しました", Toast.LENGTH_LONG).show();
-            sw.setChecked(false);
-        }else{
+            //sw.setChecked(false);
+        }
+        if(sw.isChecked()){
             ExecutorService executorService  = Executors.newSingleThreadExecutor();
             executorService.submit(autoUnlocker);
 

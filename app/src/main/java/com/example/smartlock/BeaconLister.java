@@ -30,7 +30,7 @@ public class BeaconLister implements AdapterView.OnItemLongClickListener {
     }
 
     public void updateListView(){
-        List<Beacon> smartLocks = beaconCE.getBeacon();
+        List<Beacon> smartLocks = beaconCE.getBeacons();
         ArrayList<String> items = new ArrayList<>();
 
         for(Beacon beacon : smartLocks){

@@ -1,13 +1,18 @@
 package com.example.smartlock;
 
+import java.sql.Time;
+import java.util.Date;
+
 public class Beacon {
     private String uuid;
     private int major;
     private int minor;
+    private Date date;
     Beacon(String uuid, int major, int minor){
         this.uuid = uuid;
         this.major = major;
         this.minor = minor;
+        this.date = null;
     }
 
     public String getUUID() {
@@ -34,4 +39,11 @@ public class Beacon {
         this.minor = minor;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 }

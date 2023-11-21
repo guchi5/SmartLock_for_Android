@@ -1,5 +1,6 @@
 package com.example.smartlock;
 
+import java.sql.Time;
 import java.util.List;
 
 public class BeaconCE {
@@ -18,10 +19,12 @@ public class BeaconCE {
         }
     }
 
-    public synchronized List<Beacon> getBeacon(){
-        return db.getBeacon();
+    public synchronized List<Beacon> getBeacons(){
+        return db.getBeacons();
     }
-
+    public synchronized Beacon getBeacon(String uuid, int major, int minor){
+        return db.getBeacon(uuid, major, minor);
+    }
     public static Beacon getBeaconInstance(String uuid, int major, int minor){
         Beacon beacon = new Beacon(uuid, major, minor);
         return beacon;
@@ -33,5 +36,8 @@ public class BeaconCE {
 
     public synchronized  boolean deleteBeacon(Beacon beacon){
         return db.deleteBeacon(beacon);
+    }
+    public synchronized  boolean updateBeacon(Beacon beacon){
+        return db.updateBeacon(beacon);
     }
 }

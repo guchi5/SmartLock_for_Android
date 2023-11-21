@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.sql.Time;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,11 +44,13 @@ public class DatabaseCE extends SQLiteOpenHelper implements SmartLockDB, BeaconD
                         "%s TEXT NOT NULL," +
                         "%s INTEGER NOT NULL," +
                         "%s INTEGER NOT NULL," +
+                        "%s INTEGER," +
                         "PRIMARY KEY(%s, %s, %s))",
                 TABLE_BEACONS,
                 FIELD_BEACON_UUID,
                 FIELD_BEACON_MAJOR,
                 FIELD_BEACON_MINOR,
+                FIELD_BEACON_DATE,
                 FIELD_BEACON_UUID,
                 FIELD_BEACON_MAJOR,
                 FIELD_BEACON_MINOR));
@@ -170,16 +174,24 @@ public class DatabaseCE extends SQLiteOpenHelper implements SmartLockDB, BeaconD
         values.put(FIELD_BEACON_UUID, beacon.getUUID());
         values.put(FIELD_BEACON_MAJOR, beacon.getMajor());
         values.put(FIELD_BEACON_MINOR, beacon.getMinor());
+        if(beacon.getDate()!=null){
+            values.put(FIELD_BEACON_DATE, beacon.getDate().getTime());
+        }
 
         return values;
     }
 
     private Beacon toBeacon(Cursor cursor) {
-        return BeaconCE.getBeaconInstance(cursor.getString(0), cursor.getInt(1), cursor.getInt(2));
+        Beacon beacon = BeaconCE.getBeaconInstance(
+                cursor.getString(0),
+                cursor.getInt(1),
+                cursor.getInt(2));
+        beacon.setDate(new Date(cursor.getLong(3)));
+        return beacon;
     }
 
     @Override
-    public List<Beacon> getBeacon() {
+    public List<Beacon> getBeacons() {
         List<Beacon> beacons = new LinkedList<>();
         String query = String.format("SELECT * FROM %s", TABLE_BEACONS);
         SQLiteDatabase db = this.getWritableDatabase();
@@ -194,6 +206,28 @@ public class DatabaseCE extends SQLiteOpenHelper implements SmartLockDB, BeaconD
         }
         return beacons;
 
+    }
+
+    @Override
+    public Beacon getBeacon(String uuid, int major, int minor) {
+        String query = String.format("SELECT * FROM %s WHERE %s = '%s' AND %s = %d AND %s = %d ",
+                TABLE_BEACONS,
+                FIELD_BEACON_UUID,
+                uuid,
+                FIELD_BEACON_MAJOR,
+                major,
+                FIELD_BEACON_MINOR,
+                minor);
+        SQLiteDatabase db = this.getWritableDatabase();
+        Beacon beacon;
+        try{
+            Cursor cursor = db.rawQuery(query, null);
+            cursor.moveToNext();
+            beacon = toBeacon(cursor);
+        }finally {
+            db.close();
+        }
+        return beacon;
     }
 
     @Override
@@ -243,5 +277,24 @@ public class DatabaseCE extends SQLiteOpenHelper implements SmartLockDB, BeaconD
             return false;
         }
 
+    }
+
+    @Override
+    public boolean updateBeacon(Beacon beacon) {
+        Log.d(LOGTAG, "UPDATE: " + beacon.getUUID());
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            ContentValues values = toBeaconValue(beacon);
+            int nrows =
+                    db.update(TABLE_BEACONS,
+                            values,
+                            FIELD_BEACON_UUID+"= ? AND "+FIELD_BEACON_MAJOR+"=? AND "+FIELD_BEACON_MINOR+"=?",
+                            new String[]{beacon.getUUID(), String.valueOf(beacon.getMajor()), String.valueOf(beacon.getMinor())});
+        } finally {
+            db.close();
+        }
+
+        return true;
     }
 }
