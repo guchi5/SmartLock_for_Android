@@ -70,7 +70,7 @@ public class KeyListViewAdapter extends SimpleAdapter {
                 Looper mainLooper = Looper.getMainLooper();  // (1)
                 Handler handler = HandlerCompat.createAsync(mainLooper);  // (2)
                 SmartLock smartLock = smartLockCE.getSmartLockAt(position);
-                KeySwitchCE keySwitchCE = new KeySwitchCE(smartLock, handler, KeySwitchCE.TOGGLE);
+                KeySwitchCE keySwitchCE = new KeySwitchCE(smartLock, handler, KeySwitchCE.TOGGLE, (MainActivity) context);
                 ExecutorService executorService  = Executors.newSingleThreadExecutor();
                 executorService.submit(keySwitchCE);
                 System.out.println("押された");

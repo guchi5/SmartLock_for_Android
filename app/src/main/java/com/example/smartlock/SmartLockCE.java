@@ -39,4 +39,13 @@ public class SmartLockCE {
         return smartLock;
     }
 
+
+    public synchronized boolean updateAPIKey(String api_key){
+        return db.updateAPIKey(api_key);
+    }
+
+    public synchronized String getAPIKey(){
+        return db.getAPIKey();
+    }
+
 }

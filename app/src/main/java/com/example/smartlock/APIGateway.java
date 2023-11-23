@@ -21,18 +21,18 @@ public class APIGateway {
     private final static int LOCK_CMD =  82;
     private final static int UNLOCK_CMD =  83;
     private final static int TOGGLE_CND = 88;
-    public static boolean unlock(SmartLock smartLock){
-        return executeRequest(UNLOCK_CMD, smartLock);
+    public static boolean unlock(SmartLock smartLock, MainActivity activity){
+        return executeRequest(UNLOCK_CMD, smartLock, activity);
     }
 
-    public static boolean lock(SmartLock smartLock){
-        return executeRequest(LOCK_CMD, smartLock);
+    public static boolean lock(SmartLock smartLock, MainActivity activity){
+        return executeRequest(LOCK_CMD, smartLock, activity);
     }
 
-    public static boolean toggle(SmartLock smartLock){
-        return executeRequest(TOGGLE_CND, smartLock);
+    public static boolean toggle(SmartLock smartLock, MainActivity activity){
+        return executeRequest(TOGGLE_CND, smartLock, activity);
     }
-    private static boolean executeRequest(int cmd, SmartLock smartLock) {
+    private static boolean executeRequest(int cmd, SmartLock smartLock, MainActivity activity) {
         try{
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 String base64_history = Base64.encodeToString("Android_SmartLock".getBytes(), Base64.DEFAULT).replace("\n", "");
@@ -41,7 +41,8 @@ public class APIGateway {
                 connection.setRequestMethod("POST");
                 connection.setInstanceFollowRedirects(false);
                 connection.setRequestProperty("Content-Type", "application/json; utf-8");
-                connection.setRequestProperty("x-api-key", "38kpmfOoGh1WwQJXcoiGd4ieGVCasblD66mXjT5g");
+                SmartLockCE smartLockCE = new SmartLockCE(activity);
+                connection.setRequestProperty("x-api-key", smartLockCE.getAPIKey());
                 connection.setDoOutput(true);
 
                 String sign = generateRandomTag(smartLock.getSecretKey()).toLowerCase();

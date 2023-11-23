@@ -107,7 +107,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        EditAPIKey editAPIKey = new EditAPIKey(this, smartLockCE);
+        Button api_key_setting = findViewById(R.id.api_key_setting);
+        api_key_setting.setOnClickListener(editAPIKey);
         updateBeaconView();
         updateSmartLockView();
 

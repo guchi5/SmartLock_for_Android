@@ -55,6 +55,12 @@ public class DatabaseCE extends SQLiteOpenHelper implements SmartLockDB, BeaconD
                 FIELD_BEACON_MAJOR,
                 FIELD_BEACON_MINOR));
 
+        db.execSQL(String.format("CREATE TABLE %s(" +
+                "%s TEXT PRIMARY KEY)",
+                TABLE_API_KEY,
+                FIELD_API_KEY
+                ));
+
 
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -149,6 +155,80 @@ public class DatabaseCE extends SQLiteOpenHelper implements SmartLockDB, BeaconD
         SQLiteDatabase db = this.getWritableDatabase();
         List<SmartLock> smartLocks =  getSmartLocks();
         return smartLocks.get(position);
+    }
+
+    @Override
+    public boolean addAPIKey(String api_key) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        long id = -1;
+        try{
+            ContentValues value = new ContentValues();
+            value.put(FIELD_API_KEY, api_key);
+            id = db.insert(TABLE_API_KEY, null, value);
+        }finally {
+            db.close();
+        }
+
+        if(id!=-1){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateAPIKey(String api_key) {
+        long id = -1;
+        if(countAPIKey()==0){
+            addAPIKey(api_key);
+        }else{
+            SQLiteDatabase db = this.getWritableDatabase();
+            try {
+                ContentValues values = new ContentValues();
+                values.put(FIELD_API_KEY, api_key);
+                int nrows =
+                        db.update(TABLE_API_KEY,
+                                values,
+                                null,
+                                null);
+            } finally {
+                db.close();
+            }
+
+        }
+
+        return true;
+    }
+
+    @Override
+    public String getAPIKey() {
+        String query = String.format("SELECT * FROM %s", TABLE_API_KEY);
+        SQLiteDatabase db = this.getWritableDatabase();
+        String api_key = null;
+        try{
+            Cursor cursor = db.rawQuery(query, null);
+            if(cursor.moveToNext()){
+                api_key = cursor.getString(0);
+            }
+        }finally {
+            db.close();
+        }
+        return api_key;
+    }
+
+    @Override
+    public int countAPIKey() {
+        String query = String.format("SELECT COUNT(*) FROM %s", TABLE_API_KEY);
+        SQLiteDatabase db = this.getWritableDatabase();
+        int count;
+        try{
+            Cursor cursor = db.rawQuery(query, null);
+            cursor.moveToNext();
+            count = cursor.getInt(0);
+        }finally {
+            db.close();
+        }
+        return count;
     }
 
     @Override

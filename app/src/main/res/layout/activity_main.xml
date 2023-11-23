@@ -34,23 +34,45 @@
         android:layout_width="match_parent"
         android:layout_height="20dp" />
 
-    <Button
-        android:id="@+id/add_smartlock"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:text="@string/add_smartlock" />
-
-    <Space
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="20dp" />
+        android:layout_height="58dp"
+        android:orientation="horizontal">
 
-    <ListView
-        android:id="@+id/smart_lock_list"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:background="#6B8BC4" />
+        <Button
+            android:id="@+id/add_smartlock"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="@string/add_smartlock" />
 
-    <Space
+        <Button
+            android:id="@+id/api_key_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="APIキー設定" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <ListView
+            android:id="@+id/smart_lock_list"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:background="#6B8BC4" >
+
+        </ListView>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
 </LinearLayout>

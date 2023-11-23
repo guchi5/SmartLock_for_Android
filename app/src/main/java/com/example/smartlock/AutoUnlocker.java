@@ -63,7 +63,7 @@ public class AutoUnlocker implements Runnable {
                     List<SmartLock> smartLocks =  smartLockCE.getSmartLocks();
 
                     for(SmartLock smartLock : smartLocks){
-                        if(KeySwitchCE.unlock(smartLock)){
+                        if(KeySwitchCE.unlock(smartLock, activity)){
                             flag = true;
                         }else{
                             Toast.makeText(activity, (CharSequence) "開錠出来ませんでした", Toast.LENGTH_LONG).show();
