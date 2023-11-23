@@ -82,15 +82,6 @@ public class AutoUnlocker implements Runnable {
 
 
     }
-    public synchronized void sleep(long msec)
-    {
-        try
-        {
-
-            System.out.println("待機");
-            wait(msec);
-        }catch(InterruptedException e){}
-    }
 
 }
 class PostExecutor implements Runnable {  // (4)
