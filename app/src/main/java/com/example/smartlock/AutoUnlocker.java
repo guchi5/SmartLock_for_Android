@@ -39,8 +39,6 @@ public class AutoUnlocker implements Runnable {
     @Override
     public void run() {
         boolean flag = false;
-        beaconGateway.clear();
-        sleep(3000);
         if(sw.isChecked()){
             List<Beacon> beacons = new ArrayList<>(beaconGateway.getBeacons());
             System.out.println("定期実行テスト "+beacons.size());
@@ -79,7 +77,7 @@ public class AutoUnlocker implements Runnable {
                     System.out.println("未発見");
                 }
             }
-            handler.post(new PostExecutor(sw, flag, activity, this));
+            handler.postDelayed(new PostExecutor(sw, flag, activity, this), 3000);
         }
 
 
@@ -111,7 +109,6 @@ class PostExecutor implements Runnable {  // (4)
         Log.i("Async-PostExecutor", "ここにUIスレッドで行いたい処理を記述する");  // (5)
         if(result){
             Toast.makeText(activity, (CharSequence) "開錠しました", Toast.LENGTH_LONG).show();
-            //sw.setChecked(false);
         }
         if(sw.isChecked()){
             ExecutorService executorService  = Executors.newSingleThreadExecutor();
